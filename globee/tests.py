@@ -140,7 +140,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
 
 
 @override_settings(GLOBEE_TEST_MODE=True)
-class GlobeeCreatePaymentObjectTestCase(TestCase):
+class GlobeePaymentIPNTestCase(TestCase):
 
     def setUp(self):
         GlobeeIPN.objects.all().delete()
