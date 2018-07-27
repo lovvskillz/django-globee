@@ -60,7 +60,7 @@ def my_payment_view(request):
         # create payment request
         if payment.create_request():
             # redirect to globee payment page
-            return HttpResponseRedirect(payment.redirect_url)
+            return HttpResponseRedirect(payment.get_payment_url())
 ```
 
 ### get GloBee ipn signal
@@ -76,7 +76,6 @@ def crypto_payment_ipn(sender, **kwargs):
     
     # check if payment is confirmed or use any other payment status
     if payment.payment_status == PAYMENT_STATUS_GLOBEE_CONFIRMED:
-        
         # get some payment infos
         amount = payment.total # payment amount
         currency = payment.currency # payment currency
@@ -85,5 +84,40 @@ def crypto_payment_ipn(sender, **kwargs):
         customer_email = payment.customer_email # customer email
         
         # Do more stuff
+        # ...
         
+```
+
+if you don't trust the ipn response, you can also get the payment data from GloBee
+
+```python
+from django.dispatch import receiver
+from django.core.exceptions import ValidationError
+from globee.models import PAYMENT_STATUS_GLOBEE_CONFIRMED
+from globee.signals import globee_valid_ipn
+from globee.core import GlobeePayment
+
+@receiver(globee_valid_ipn)
+def crypto_payment_ipn(sender, **kwargs):
+    payment = sender
+    globee_payment = GlobeePayment()
+    
+    try:
+        # get the payment data from globee
+        payment_data = globee_payment.get_payment_by_id(payment.payment_id)
+        
+        # check if payment is confirmed or use any other payment status
+        if payment_data['status'] == PAYMENT_STATUS_GLOBEE_CONFIRMED:
+            # get some payment infos
+            amount = float(payment_data['total']) # payment amount
+            currency = payment_data['currency'] # payment currency
+            payment_id = payment_data['payment_id'] # payment id from GloBee
+            custom_payment_id = payment_data['custom_payment_id'] # your custom payment id
+            customer_email = payment_data['customer']['email'] # customer email
+            
+            # Do more stuff
+            # ...
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
 ```
