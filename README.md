@@ -1,5 +1,7 @@
 # django-globee
 
+[![PyPI version](https://badge.fury.io/py/django-globee.svg)](https://badge.fury.io/py/django-globee)
+
 django-globee is a Django app to integrate GloBee Payments.
 
 Quick start
