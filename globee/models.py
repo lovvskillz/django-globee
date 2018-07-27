@@ -42,7 +42,7 @@ class GlobeeIPN(models.Model):
     custom_payment_id = models.CharField(max_length=255, blank=True, null=True, help_text='A reference or custom identifier that you can use to link the payment back to your system')
     callback_data = models.CharField(max_length=255, blank=True, null=True, help_text='Passthrough data that will be returned in the IPN callback')
     notification_email = models.CharField(max_length=255, blank=True, null=True, help_text='An email address that the system will send a notification email to once the payment has been confirmed')
-    confirmation_speed = models.CharField(max_length=5, choices=SPEED_STATUS_CHOICES, default=SPEED_STATUS_GLOBEE_MEDIUM)
+    confirmation_speed = models.CharField(max_length=50, choices=SPEED_STATUS_CHOICES, default=SPEED_STATUS_GLOBEE_MEDIUM)
     created_at = models.DateTimeField()
     expires_at = models.DateTimeField()
 
