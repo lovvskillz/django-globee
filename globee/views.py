@@ -23,7 +23,7 @@ def globee_ipn_view(request):
         expires_at = datetime.datetime.strptime(payment_data['expires_at'], '%Y-%m-%d %H:%M:%S')
         defaults = {
             'payment_status': payment_data['status'],
-            'total': payment_data['total'],
+            'total': float(payment_data['total']),
             'currency': payment_data['currency'],
             'custom_payment_id': payment_data['custom_payment_id'],
             'callback_data': payment_data['callback_data'],
