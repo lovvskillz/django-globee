@@ -10,4 +10,3 @@ class GlobeeIPNAdmin(admin.ModelAdmin):
 
 
 admin.site.register(GlobeeIPN, GlobeeIPNAdmin)
-
