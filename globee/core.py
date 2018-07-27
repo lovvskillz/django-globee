@@ -54,14 +54,17 @@ class GlobeePayment:
     def create_request(self):
         r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.data)
         response = r.json()
-        if r.status_code in [401, 404, 500]:
-            raise ValidationError("status code %s: %s" % (r.status_code, response['message']))
-        if not r.status_code == 422:
+        if r.status_code == 200:
             self.redirect_url = response['data']['redirect_url']
             return True
-        raise ValidationError(response)
+        raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
     def get_payment_url(self):
         return self.redirect_url
 
-
+    def get_payment_by_id(self, payment_id):
+        r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=self.data)
+        response = r.json()
+        if r.status_code == 200:
+            return response['data']
+        raise ValidationError('status code: %s - %s' % (r.status_code, response))
