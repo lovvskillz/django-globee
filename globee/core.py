@@ -28,6 +28,15 @@ class GlobeePayment:
             'X-AUTH-KEY': self.auth_key
         }
 
+    def ping(self):
+        r = requests.get('%s/ping' % self.api_url, headers=self.headers, json=self.data)
+        response = r.json()
+        if r.status_code == 200:
+            if response['success']:
+                return True
+            raise ValidationError('result: %s' % response['result'])
+        raise ValidationError("status code %s: %s" % (r.status_code, response['message']))
+
     def check_required_fields(self):
         try:
             total = self.data['total']

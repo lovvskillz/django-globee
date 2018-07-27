@@ -1,13 +1,24 @@
-import datetime
 import json
 
-import pytz
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings, Client
 from django.urls import reverse
 
 from globee.core import GlobeePayment
 from globee.models import GlobeeIPN
+
+
+class GlobeePingTestCase(TestCase):
+
+    def test_ping_valid(self):
+        globee_payment = GlobeePayment()
+        self.assertTrue(globee_payment.ping())
+
+    @override_settings(GLOBEE_AUTH_KEY="INVALID_KEY")
+    def test_ping_invalid_key(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.ping()
 
 
 class GlobeeRequiredFieldsTestCase(TestCase):
@@ -79,6 +90,13 @@ class GlobeeCreatePaymentTestCase(TestCase):
         globee_payment = GlobeePayment(data=data)
         self.assertTrue(globee_payment.check_required_fields())
         self.assertTrue(globee_payment.create_request())
+
+    def test_create_payment_invalid_empty_data(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(KeyError):
+            globee_payment.check_required_fields()
+        with self.assertRaises(ValidationError):
+            globee_payment.create_request()
 
     @override_settings(GLOBEE_AUTH_KEY="INVALID_KEY")
     def test_create_payment_invalid_key(self):
