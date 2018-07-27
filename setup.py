@@ -17,7 +17,7 @@ setup(
     long_description=README,
     url='https://github.com/lovvskillz/django-globee',
     install_requires=[
-            'Django>=1.11',
+            'Django>=2.0',
             'six>=1.4.1',
             'requests>=2.19.1',
             'pytz>=2018.5',
