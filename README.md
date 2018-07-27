@@ -1,6 +1,6 @@
 # django-globee
 
-django-globee is a Django app to integrate Globee Payments.
+django-globee is a Django app to integrate GloBee Payments.
 
 Quick start
 -----------
@@ -25,3 +25,54 @@ Quick start
 
 
 4. Run `python manage.py migrate` to create the globee models.
+
+
+## example
+
+### create GloBee payment
+
+```python
+from globee.core import GlobeePayment
+
+custom_payment_id = 'Your-custom-payment-id-%s' % randint(1, 9999999)
+payment_data = {
+    'total': 10.50,
+    'currency': 'USD',
+    'custom_payment_id': custom_payment_id,
+    'customer': {
+        'name': request.user.username,
+        'email': request.user.email
+    },
+    'success_url': request.build_absolute_uri(reverse('success_url')),
+    'cancel_url': request.build_absolute_uri(reverse('cancel_url')),
+    'ipn_url': request.build_absolute_uri(reverse('globee-ipn')),
+}
+payment = GlobeePayment(data=payment_data)
+if payment.check_required_fields():
+    if payment.create_request():
+        return HttpResponseRedirect(payment.redirect_url)
+```
+
+### get GloBee ipn signal
+
+```python
+from globee.models import PAYMENT_STATUS_GLOBEE_CONFIRMED
+from globee.signals import globee_valid_ipn
+
+@receiver(globee_valid_ipn)
+def crypto_payment_ipn(sender, **kwargs):
+    payment = sender
+    
+    # check if payment is confirmed or use any other payment status
+    if payment.status == PAYMENT_STATUS_GLOBEE_CONFIRMED:
+        
+        # get some payment infos
+        amount = payment.total # payment amount
+        currency = payment.currency # payment currency
+        payment_id = payment.payment_id # payment id from GloBee
+        custom_payment_id = payment.custom_payment_id # your custom payment id
+        customer_email = payment.customer_email # customer email
+        
+        # Do more stuff
+        
+```
