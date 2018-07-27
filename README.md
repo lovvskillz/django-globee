@@ -72,7 +72,7 @@ def crypto_payment_ipn(sender, **kwargs):
     payment = sender
     
     # check if payment is confirmed or use any other payment status
-    if payment.status == PAYMENT_STATUS_GLOBEE_CONFIRMED:
+    if payment.payment_status == PAYMENT_STATUS_GLOBEE_CONFIRMED:
         
         # get some payment infos
         amount = payment.total # payment amount
