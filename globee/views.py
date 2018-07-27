@@ -33,7 +33,7 @@ def globee_ipn_view(request):
             'expires_at': pytz.utc.localize(expires_at),
         }
         payment, created = GlobeeIPN.objects.get_or_create(payment_id=payment_data['id'], defaults=defaults)
-        payment.status = payment_data['status']
+        payment.payment_status = payment_data['status']
         payment.save()
         payment.send_valid_signal()
     return HttpResponse("Ok")
