@@ -32,30 +32,38 @@ Quick start
 ### create GloBee payment
 
 ```python
+from random import randint
+from django.http import HttpResponseRedirect
+from django.urls.base import reverse
 from globee.core import GlobeePayment
 
-custom_payment_id = 'Your-custom-payment-id-%s' % randint(1, 9999999)
-payment_data = {
-    'total': 10.50,
-    'currency': 'USD',
-    'custom_payment_id': custom_payment_id,
-    'customer': {
-        'name': request.user.username,
-        'email': request.user.email
-    },
-    'success_url': request.build_absolute_uri(reverse('success_url')),
-    'cancel_url': request.build_absolute_uri(reverse('cancel_url')),
-    'ipn_url': request.build_absolute_uri(reverse('globee-ipn')),
-}
-payment = GlobeePayment(data=payment_data)
-if payment.check_required_fields():
-    if payment.create_request():
-        return HttpResponseRedirect(payment.redirect_url)
+def my_payment_view(request):
+    custom_payment_id = 'Your-custom-payment-id-%s' % randint(1, 9999999)
+    payment_data = {
+        'total': 10.50,
+        'currency': 'USD',
+        'custom_payment_id': custom_payment_id,
+        'customer': {
+            'name': request.user.username,
+            'email': request.user.email
+        },
+        'success_url': request.build_absolute_uri(reverse('your-success-url')),
+        'cancel_url': request.build_absolute_uri(reverse('your-cancel-url')),
+        'ipn_url': request.build_absolute_uri(reverse('globee-ipn')),
+    }
+    payment = GlobeePayment(data=payment_data)
+    # check required fields for globee payments
+    if payment.check_required_fields():
+        # create payment request
+        if payment.create_request():
+            # redirect to globee payment page
+            return HttpResponseRedirect(payment.redirect_url)
 ```
 
 ### get GloBee ipn signal
 
 ```python
+from django.dispatch import receiver
 from globee.models import PAYMENT_STATUS_GLOBEE_CONFIRMED
 from globee.signals import globee_valid_ipn
 
