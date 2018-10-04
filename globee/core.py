@@ -33,7 +33,7 @@ class GlobeePayment:
         response = r.json()
         if r.status_code == 200:
             if response['success']:
-                return True
+                return response
             raise ValidationError('result: %s' % response['result'])
         raise ValidationError("status code %s: %s" % (r.status_code, response['message']))
 
