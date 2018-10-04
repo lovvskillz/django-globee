@@ -13,8 +13,8 @@ class GlobeePayment:
     api_url = 'https://globee.com/payment-api/v1'
     headers = None
 
-    def __init__(self, data={}):
-        self.data = data
+    def __init__(self, data=None):
+        self.data = dict() if data is None else data
         self.test_mode = getattr(settings, 'GLOBEE_TEST_MODE', True)
         self.auth_key = getattr(settings, 'GLOBEE_AUTH_KEY', None)
         if self.auth_key is None:
