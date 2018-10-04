@@ -3,7 +3,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/lovvskillz/django-globee/master/LICENSE)
 [![PyPI version](https://badge.fury.io/py/django-globee.svg)](https://badge.fury.io/py/django-globee)
 
-django-globee is a Django app to integrate GloBee Payments.
+django-globee is a Django app to integrate [GloBee](https://globee.com/) Payments.
 
 Quick start
 -----------
