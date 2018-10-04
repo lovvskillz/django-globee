@@ -40,7 +40,6 @@ class GlobeePayment:
     def check_required_fields(self):
         try:
             total = self.data['total']
-            email = self.data['customer']['email']
             if not isinstance(total, (int, float)):
                 raise ValidationError('total is not a int or float!')
         except KeyError as e:
