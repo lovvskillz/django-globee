@@ -29,7 +29,7 @@ class GlobeePayment:
         }
 
     def ping(self):
-        r = requests.get('%s/ping' % self.api_url, headers=self.headers, json=self.data)
+        r = requests.get('%s/ping' % self.api_url, headers=self.headers)
         response = r.json()
         if r.status_code == 200:
             if response['success']:
@@ -62,7 +62,7 @@ class GlobeePayment:
         return self.redirect_url
 
     def get_payment_by_id(self, payment_id):
-        r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=self.data)
+        r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
         if r.status_code == 200:
             return response['data']
