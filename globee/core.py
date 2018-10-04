@@ -5,7 +5,9 @@ from django.core.validators import validate_email
 
 
 class GlobeePayment:
-
+    """
+    Globee Payment
+    """
     data = dict()
     redirect_url = None
     test_mode = True
@@ -14,6 +16,10 @@ class GlobeePayment:
     headers = None
 
     def __init__(self, data=None):
+        """
+        Init Globee payment
+        :param data: dict with payment data
+        """
         self.data = dict() if data is None else data
         self.test_mode = getattr(settings, 'GLOBEE_TEST_MODE', True)
         self.auth_key = getattr(settings, 'GLOBEE_AUTH_KEY', None)
@@ -29,6 +35,10 @@ class GlobeePayment:
         }
 
     def ping(self):
+        """
+        sends a ping to verify that the integration and authentication is done correctly
+        :return: response with the merchant name and url
+        """
         r = requests.get('%s/ping' % self.api_url, headers=self.headers)
         response = r.json()
         if r.status_code == 200:
@@ -38,6 +48,10 @@ class GlobeePayment:
         raise ValidationError("status code %s: %s" % (r.status_code, response['errors']['message']))
 
     def check_required_fields(self):
+        """
+        checks all required fields
+        :return: returns True if required fields are set
+        """
         try:
             total = self.data['total']
             if not isinstance(total, (int, float)):
@@ -51,17 +65,30 @@ class GlobeePayment:
         return True
 
     def create_request(self):
+        """
+        creates a new payment request
+        :return: payment url
+        """
         r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.data)
         response = r.json()
         if r.status_code == 200:
             self.redirect_url = response['data']['redirect_url']
-            return True
+            return response['data']['redirect_url']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
     def get_payment_url(self):
+        """
+        gets the payment url
+        :return: payment url
+        """
         return self.redirect_url
 
     def get_payment_by_id(self, payment_id):
+        """
+        fetches a previously created payment request by payment_id.
+        :param payment_id:
+        :return: payment data
+        """
         r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
         if r.status_code == 200:
