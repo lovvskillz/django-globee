@@ -32,6 +32,17 @@ Quick start
 
 ## example
 
+### ping
+```python
+from globee.core import GlobeePayment
+
+def ping():
+    payment = GlobeePayment()
+    response = payment.ping()
+    # response contains merchant name and url
+    print(response)
+```
+
 ### create GloBee payment
 
 ```python
@@ -58,9 +69,9 @@ def my_payment_view(request):
     # check required fields for globee payments
     if payment.check_required_fields():
         # create payment request
-        if payment.create_request():
-            # redirect to globee payment page
-            return HttpResponseRedirect(payment.get_payment_url())
+        redirect_url = payment.create_request()
+        # redirect to globee payment page
+        return HttpResponseRedirect(redirect_url)
 ```
 
 ### get GloBee ipn signal
