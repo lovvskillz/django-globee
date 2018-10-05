@@ -31,7 +31,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
 
     def test_required_fields_invalid_total(self):
@@ -41,7 +41,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
 
@@ -52,7 +52,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'invalid_mail.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
 
@@ -62,7 +62,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(KeyError):
             globee_payment.check_required_fields()
 
@@ -70,7 +70,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
         data = {
             'total': 13.37,
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(KeyError):
             globee_payment.check_required_fields()
 
@@ -87,7 +87,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
         self.assertTrue(globee_payment.create_request())
 
@@ -107,7 +107,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
         with self.assertRaises(ValidationError):
             globee_payment.create_request()
@@ -119,7 +119,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
                 'name': 'foobar',
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(ValidationError):
             globee_payment.create_request()
 
@@ -133,7 +133,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
             'cancel_url': 'invalid-url',
             'ipn_url': 'invalid-url',
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
         with self.assertRaises(ValidationError):
             globee_payment.create_request()

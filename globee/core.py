@@ -8,19 +8,19 @@ class GlobeePayment:
     """
     Globee Payment
     """
-    data = dict()
+    payment_data = dict()
     redirect_url = None
     test_mode = True
     auth_key = None
     api_url = 'https://globee.com/payment-api/v1'
     headers = None
 
-    def __init__(self, data=None):
+    def __init__(self, payment_data=None):
         """
         Init Globee payment
-        :param data: dict with payment data
+        :param payment_data: dict with payment data
         """
-        self.data = dict() if data is None else data
+        self.payment_data = dict() if payment_data is None else payment_data
         self.test_mode = getattr(settings, 'GLOBEE_TEST_MODE', True)
         self.auth_key = getattr(settings, 'GLOBEE_AUTH_KEY', None)
         if self.auth_key is None:
@@ -53,13 +53,13 @@ class GlobeePayment:
         :return: returns True if required fields are set
         """
         try:
-            total = self.data['total']
+            total = self.payment_data['total']
             if not isinstance(total, (int, float)):
                 raise ValidationError('total is not a int or float!')
         except KeyError as e:
             raise KeyError(e)
         try:
-            validate_email(self.data['customer']['email'])
+            validate_email(self.payment_data['customer']['email'])
         except ValidationError as e:
             raise ValidationError(e)
         return True
@@ -69,7 +69,7 @@ class GlobeePayment:
         creates a new payment request
         :return: payment url
         """
-        r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.data)
+        r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.payment_data)
         response = r.json()
         if r.status_code == 200:
             self.redirect_url = response['data']['redirect_url']

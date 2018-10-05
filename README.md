@@ -65,7 +65,7 @@ def my_payment_view(request):
         'cancel_url': request.build_absolute_uri(reverse('your-cancel-url')),
         'ipn_url': request.build_absolute_uri(reverse('globee-ipn')),
     }
-    payment = GlobeePayment(data=payment_data)
+    payment = GlobeePayment(payment_data=payment_data)
     # check required fields for globee payments
     if payment.check_required_fields():
         # create payment request
