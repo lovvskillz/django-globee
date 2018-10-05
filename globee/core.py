@@ -9,18 +9,21 @@ class GlobeePayment:
     Globee Payment
     """
     payment_data = dict()
+    payment_id = None
     redirect_url = None
     test_mode = True
     auth_key = None
     api_url = 'https://globee.com/payment-api/v1'
     headers = None
 
-    def __init__(self, payment_data=None):
+    def __init__(self, payment_data=None, payment_id=None):
         """
         Init Globee payment
         :param payment_data: dict with payment data
+        :param payment_id: payment id
         """
         self.payment_data = dict() if payment_data is None else payment_data
+        self.payment_id = payment_id
         self.test_mode = getattr(settings, 'GLOBEE_TEST_MODE', True)
         self.auth_key = getattr(settings, 'GLOBEE_AUTH_KEY', None)
         if self.auth_key is None:
@@ -73,6 +76,7 @@ class GlobeePayment:
         response = r.json()
         if r.status_code == 200:
             self.redirect_url = response['data']['redirect_url']
+            self.payment_id = response['data']['id']
             return response['data']['redirect_url']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
@@ -83,13 +87,39 @@ class GlobeePayment:
         """
         return self.redirect_url
 
-    def get_payment_by_id(self, payment_id):
+    def get_payment_by_id(self, payment_id=None):
         """
         fetches a previously created payment request by payment_id.
         :param payment_id:
         :return: payment data
         """
+        payment_id = self.payment_id if payment_id is None else payment_id
+        if payment_id is None:
+            raise ValidationError('payment_id is None')
         r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
+        response = r.json()
+        if r.status_code == 200:
+            return response['data']
+        raise ValidationError('status code: %s - %s' % (r.status_code, response))
+
+    def update_payment_request(self, payment_id=None, payment_data=None):
+        """
+        updates an existing payment request
+        :param payment_id: payment id
+        :param payment_data: dict with payment data
+        :return: response data
+        """
+        payment_id = self.payment_id if payment_id is None else payment_id
+        payment_data = self.payment_data if payment_data is None else payment_data
+        if payment_id is None:
+            raise ValidationError('payment_id is None')
+        if payment_data is None:
+            raise ValidationError('payment_data is None')
+        try:
+            validate_email(payment_data['customer']['email'])
+        except ValidationError as e:
+            raise ValidationError(e)
+        r = requests.put('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=payment_data)
         response = r.json()
         if r.status_code == 200:
             return response['data']

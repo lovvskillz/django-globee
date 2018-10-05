@@ -5,6 +5,8 @@
 
 django-globee is a Django app to integrate [GloBee](https://globee.com/) Payments.
 
+You can find the GloBee API docs [here](https://globee.com/docs/payment-api/v1).
+
 Quick start
 -----------
 
@@ -52,14 +54,14 @@ from django.urls.base import reverse
 from globee.core import GlobeePayment
 
 def my_payment_view(request):
-    custom_payment_id = 'Your-custom-payment-id-%s' % randint(1, 9999999)
+    custom_payment_id = 'your-custom-payment-id-%s' % randint(1, 9999999)
     payment_data = {
-        'total': 10.50,
+        'total': 10.50, # total is required
         'currency': 'USD',
         'custom_payment_id': custom_payment_id,
         'customer': {
             'name': request.user.username,
-            'email': request.user.email
+            'email': request.user.email # email is required
         },
         'success_url': request.build_absolute_uri(reverse('your-success-url')),
         'cancel_url': request.build_absolute_uri(reverse('your-cancel-url')),
@@ -112,10 +114,14 @@ from globee.core import GlobeePayment
 def crypto_payment_ipn(sender, **kwargs):
     payment = sender
     globee_payment = GlobeePayment()
+    # OR set payment id in init
+    # globee_payment = GlobeePayment(payment_id=payment.payment_id)
     
     try:
         # get the payment data from globee
         payment_data = globee_payment.get_payment_by_id(payment.payment_id)
+        # you don't need to set the payment id if you have already set the payment id in GlobeePayment init
+        # payment_data = globee_payment.get_payment_by_id()
         
         # check if payment is confirmed or use any other payment status
         if payment_data['status'] == PAYMENT_STATUS_GLOBEE_CONFIRMED:
@@ -128,6 +134,34 @@ def crypto_payment_ipn(sender, **kwargs):
             
             # Do more stuff
             # ...
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
+```
+
+### update an existing payment
+```python
+from random import randint
+from django.core.exceptions import ValidationError
+from globee.core import GlobeePayment
+
+def update_payment():
+    new_payment_id = 'your-new-custom-payment-id-%s' % randint(1, 9999999)
+    # dict with updated values for payment request
+    data = {
+        "custom_payment_id": new_payment_id,
+        "custom_store_reference": "abc",
+        "callback_data": "example data",
+        "customer": {
+            "name": "John Smit",
+            "email": "john.smit@hotmail.com" # email is required
+        },
+    }
+    globee_payment = GlobeePayment(payment_id="PAYMENT_ID", payment_data=data)
+    try:
+        # updates an existing payment request
+        response = globee_payment.update_payment_request()
+        print(response)
     except ValidationError as e:
         # payment not found or other error
         print(e)
