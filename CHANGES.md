@@ -1,6 +1,6 @@
 # Changes
 
-## 2018-10-15 1.2.0
+## 1.2.0
 - `update_payment_request()` updates an existing payment request 
 - `ping()` returns the response from globee
 - rename `data` parameter into `payment_data` in `GlobeePayment` init

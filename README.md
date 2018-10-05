@@ -153,8 +153,8 @@ def update_payment():
         "custom_store_reference": "abc",
         "callback_data": "example data",
         "customer": {
-            "name": "John Smit",
-            "email": "john.smit@hotmail.com" # email is required
+            "name": "Customer Name",
+            "email": "new_email@example.com" # email is required
         },
     }
     globee_payment = GlobeePayment(payment_id="PAYMENT_ID", payment_data=data)
