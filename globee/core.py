@@ -35,12 +35,11 @@ class GlobeePayment:
             if response['success']:
                 return True
             raise ValidationError('result: %s' % response['result'])
-        raise ValidationError("status code %s: %s" % (r.status_code, response['message']))
+        raise ValidationError("status code %s: %s" % (r.status_code, response['errors']['message']))
 
     def check_required_fields(self):
         try:
             total = self.data['total']
-            email = self.data['customer']['email']
             if not isinstance(total, (int, float)):
                 raise ValidationError('total is not a int or float!')
         except KeyError as e:
