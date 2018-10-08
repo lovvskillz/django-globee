@@ -166,3 +166,13 @@ def update_payment():
         # payment not found or other error
         print(e)
 ```
+
+### get payment methods
+```python
+from globee.core import GlobeePayment
+
+def get_payment_methods():
+    globee_payment = GlobeePayment()
+    response = globee_payment.get_payment_methods()
+    print(response)
+```

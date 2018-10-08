@@ -2,6 +2,7 @@
 
 ## 1.2.0
 - `update_payment_request()` updates an existing payment request 
+- `get_payment_methods()` returns the merchant account's accepted crypto-currencies
 - `ping()` returns the response from globee
 - rename `data` parameter into `payment_data` in `GlobeePayment` init
 

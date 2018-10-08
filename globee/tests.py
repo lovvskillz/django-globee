@@ -227,3 +227,11 @@ class GlobeeUpdatePaymentTestCase(TestCase):
         with self.assertRaises(KeyError):
             response = globee_payment.update_payment_request()
 
+
+@override_settings(GLOBEE_TEST_MODE=True)
+class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
+
+    def test_get_payment_methods_valid(self):
+        globee_payment = GlobeePayment()
+        response = globee_payment.get_payment_methods()
+        self.assertIsInstance(response, list)

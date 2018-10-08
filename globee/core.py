@@ -129,3 +129,14 @@ class GlobeePayment:
         if r.status_code == 200 and response['success'] is True:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
+
+    def get_payment_methods(self):
+        """
+        this returns the merchant account's accepted crypto-currencies
+        :return: returns accepted crypto-currencies
+        """
+        r = requests.get('%s/account/payment-methods' % self.api_url, headers=self.headers)
+        response = r.json()
+        if r.status_code == 200 and response['success'] is True:
+            return response['data']
+        raise ValidationError('status code: %s - %s' % (r.status_code, response))
