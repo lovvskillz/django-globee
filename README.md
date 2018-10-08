@@ -32,7 +32,14 @@ Quick start
 4. Run `python manage.py migrate` to create the globee models.
 
 
-## example
+## examples
+
+* [Ping](#ping)
+* [Create payment](#create-globee-payment)
+* [Get IPN signal](#get-globee-ipn-signal)
+* [Get payment by ID](#get-an-existing-payment-by-id)
+* [Update payment](#update-an-existing-payment)
+* [Get payment methods](#get-payment-methods)
 
 ### ping
 ```python
@@ -134,6 +141,22 @@ def crypto_payment_ipn(sender, **kwargs):
             
             # Do more stuff
             # ...
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
+```
+
+### get an existing payment by id
+```python
+from django.core.exceptions import ValidationError
+from globee.core import GlobeePayment
+
+def get_payment():
+    globee_payment = GlobeePayment(payment_id="PAYMENT_ID")
+    try:
+        # get the payment data from globee
+        payment_data = globee_payment.get_payment_by_id()
+        
     except ValidationError as e:
         # payment not found or other error
         print(e)
