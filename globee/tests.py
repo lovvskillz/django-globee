@@ -31,7 +31,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
 
     def test_required_fields_invalid_total(self):
@@ -41,7 +41,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
 
@@ -52,7 +52,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'invalid_mail.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
 
@@ -62,7 +62,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(KeyError):
             globee_payment.check_required_fields()
 
@@ -70,7 +70,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
         data = {
             'total': 13.37,
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(KeyError):
             globee_payment.check_required_fields()
 
@@ -87,9 +87,9 @@ class GlobeeCreatePaymentTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
-        self.assertTrue(globee_payment.create_request())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
 
     def test_create_payment_invalid_empty_data(self):
         globee_payment = GlobeePayment()
@@ -107,7 +107,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
                 'email': 'foobar@example.com'
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
         with self.assertRaises(ValidationError):
             globee_payment.create_request()
@@ -119,7 +119,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
                 'name': 'foobar',
             },
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         with self.assertRaises(ValidationError):
             globee_payment.create_request()
 
@@ -133,7 +133,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
             'cancel_url': 'invalid-url',
             'ipn_url': 'invalid-url',
         }
-        globee_payment = GlobeePayment(data=data)
+        globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
         with self.assertRaises(ValidationError):
             globee_payment.create_request()
@@ -173,3 +173,99 @@ class GlobeePaymentIPNTestCase(TestCase):
         client = Client()
         client.generic('POST', reverse('globee-ipn'), bytes(json.dumps(payment_data), 'utf-8'))
         self.assertEqual(count_before + 1, GlobeeIPN.objects.all().count())
+
+
+@override_settings(GLOBEE_TEST_MODE=True)
+class GlobeeUpdatePaymentTestCase(TestCase):
+
+    def test_update_payment_valid(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        custom_payment_id = "NEWID"
+        custom_store_reference = "NEWSTOREREF"
+        updated_data = {
+            "custom_payment_id": custom_payment_id,
+            "custom_store_reference": custom_store_reference,
+            'customer': {
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment.payment_data = updated_data
+        response = globee_payment.update_payment_request()
+        self.assertEqual(response['id'], globee_payment.payment_id)
+        self.assertEqual(response['custom_payment_id'], custom_payment_id)
+        self.assertEqual(response['custom_store_reference'], custom_store_reference)
+
+    def test_update_payment_invalid_email_not_set(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        custom_payment_id = "NEWID"
+        custom_store_reference = "NEWSTOREREF"
+        updated_data = {
+            "custom_payment_id": custom_payment_id,
+            "custom_store_reference": custom_store_reference,
+        }
+        globee_payment.payment_data = updated_data
+        with self.assertRaises(KeyError):
+            response = globee_payment.update_payment_request()
+
+
+@override_settings(GLOBEE_TEST_MODE=True)
+class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
+
+    def test_get_payment_methods_valid(self):
+        globee_payment = GlobeePayment()
+        response = globee_payment.get_payment_methods()
+        self.assertIsInstance(response, list)
+
+
+@override_settings(GLOBEE_TEST_MODE=True)
+class GlobeePaymentDetailsTestCase(TestCase):
+
+    def test_get_payment_details_valid(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        response = globee_payment.get_payment_details()
+        self.assertIsInstance(response, list)
+
+    def test_get_payment_details_for_currency_valid(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        response = globee_payment.get_payment_currency_details("BTC")
+        self.assertIsInstance(response, dict)
