@@ -57,10 +57,11 @@ class GlobeePayment:
         """
         try:
             total = self.payment_data['total']
+            email = self.payment_data['customer']['email']
             if not isinstance(total, (int, float)):
                 raise ValidationError('total is not a int or float!')
         except KeyError as e:
-            raise KeyError(e)
+            raise KeyError("%s not set" % e)
         try:
             validate_email(self.payment_data['customer']['email'])
         except ValidationError as e:
@@ -115,6 +116,10 @@ class GlobeePayment:
             raise ValidationError('payment_id is None')
         if payment_data is None:
             raise ValidationError('payment_data is None')
+        try:
+            email = self.payment_data['customer']['email']
+        except KeyError as e:
+            raise KeyError("%s not set" % e)
         try:
             validate_email(payment_data['customer']['email'])
         except ValidationError as e:
