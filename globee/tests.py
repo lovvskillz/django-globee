@@ -235,3 +235,37 @@ class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
         globee_payment = GlobeePayment()
         response = globee_payment.get_payment_methods()
         self.assertIsInstance(response, list)
+
+
+@override_settings(GLOBEE_TEST_MODE=True)
+class GlobeePaymentDetailsTestCase(TestCase):
+
+    def test_get_payment_details_valid(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        response = globee_payment.get_payment_details()
+        self.assertIsInstance(response, list)
+
+    def test_get_payment_details_for_currency_valid(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        response = globee_payment.get_payment_currency_details("BTC")
+        self.assertIsInstance(response, dict)

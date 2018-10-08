@@ -4,10 +4,12 @@
 
 * [Ping](#ping)
 * [Create payment](#create-globee-payment)
-* [Get IPN signal](#get-globee-ipn-signal)
 * [Get payment by ID](#get-an-existing-payment-by-id)
 * [Update payment](#update-an-existing-payment)
+* [Get payment details](#get payment details)
+* [Get payment details for payment request and currency](#get payment currency_details)
 * [Get payment methods](#get-payment-methods)
+* [Get IPN signal](#get-globee-ipn-signal)
 
 ### ping
 ```python
@@ -49,6 +51,93 @@ def my_payment_view(request):
         redirect_url = payment.create_request()
         # redirect to globee payment page
         return HttpResponseRedirect(redirect_url)
+```
+
+### get an existing payment by id
+```python
+from django.core.exceptions import ValidationError
+from globee.core import GlobeePayment
+
+def get_payment():
+    globee_payment = GlobeePayment(payment_id="PAYMENT_ID")
+    try:
+        # get the payment data from globee
+        payment_data = globee_payment.get_payment_by_id()
+        print(payment_data)
+        
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
+```
+
+### update an existing payment
+```python
+from random import randint
+from django.core.exceptions import ValidationError
+from globee.core import GlobeePayment
+
+def update_payment():
+    new_payment_id = 'your-new-custom-payment-id-%s' % randint(1, 9999999)
+    # dict with updated values for payment request
+    data = {
+        "custom_payment_id": new_payment_id,
+        "custom_store_reference": "abc",
+        "callback_data": "example data",
+        "customer": {
+            "name": "Customer Name",
+            "email": "new_email@example.com" # email is required
+        },
+    }
+    globee_payment = GlobeePayment(payment_id="PAYMENT_ID", payment_data=data)
+    try:
+        # updates an existing payment request
+        response = globee_payment.update_payment_request()
+        print(response)
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
+```
+
+### get payment details
+```python
+from django.core.exceptions import ValidationError
+from globee.core import GlobeePayment
+
+def get_payment_details():
+    globee_payment = GlobeePayment(payment_id="PAYMENT_ID")
+    try:
+        # get payment details
+        response = globee_payment.get_payment_details()
+        print(response)
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
+```
+
+### get payment currency details
+```python
+from django.core.exceptions import ValidationError
+from globee.core import GlobeePayment
+
+def get_payment_details():
+    globee_payment = GlobeePayment(payment_id="PAYMENT_ID")
+    try:
+        # get payment details for payment request and payment currency
+        response = globee_payment.get_payment_currency_details("BTC")
+        print(response)
+    except ValidationError as e:
+        # payment not found or other error
+        print(e)
+```
+
+### get payment methods
+```python
+from globee.core import GlobeePayment
+
+def get_payment_methods():
+    globee_payment = GlobeePayment()
+    response = globee_payment.get_payment_methods()
+    print(response)
 ```
 
 ### get GloBee ipn signal
@@ -112,58 +201,4 @@ def crypto_payment_ipn(sender, **kwargs):
     except ValidationError as e:
         # payment not found or other error
         print(e)
-```
-
-### get an existing payment by id
-```python
-from django.core.exceptions import ValidationError
-from globee.core import GlobeePayment
-
-def get_payment():
-    globee_payment = GlobeePayment(payment_id="PAYMENT_ID")
-    try:
-        # get the payment data from globee
-        payment_data = globee_payment.get_payment_by_id()
-        
-    except ValidationError as e:
-        # payment not found or other error
-        print(e)
-```
-
-### update an existing payment
-```python
-from random import randint
-from django.core.exceptions import ValidationError
-from globee.core import GlobeePayment
-
-def update_payment():
-    new_payment_id = 'your-new-custom-payment-id-%s' % randint(1, 9999999)
-    # dict with updated values for payment request
-    data = {
-        "custom_payment_id": new_payment_id,
-        "custom_store_reference": "abc",
-        "callback_data": "example data",
-        "customer": {
-            "name": "Customer Name",
-            "email": "new_email@example.com" # email is required
-        },
-    }
-    globee_payment = GlobeePayment(payment_id="PAYMENT_ID", payment_data=data)
-    try:
-        # updates an existing payment request
-        response = globee_payment.update_payment_request()
-        print(response)
-    except ValidationError as e:
-        # payment not found or other error
-        print(e)
-```
-
-### get payment methods
-```python
-from globee.core import GlobeePayment
-
-def get_payment_methods():
-    globee_payment = GlobeePayment()
-    response = globee_payment.get_payment_methods()
-    print(response)
 ```

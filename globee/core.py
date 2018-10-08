@@ -20,7 +20,7 @@ class GlobeePayment:
         """
         Init Globee payment
         :param payment_data: dict with payment data
-        :param payment_id: payment id
+        :param payment_id: the payment id that identifies the payment request
         """
         self.payment_data = dict() if payment_data is None else payment_data
         self.payment_id = payment_id
@@ -39,7 +39,7 @@ class GlobeePayment:
 
     def ping(self):
         """
-        sends a ping to verify that the integration and authentication is done correctly
+        Sends a ping to verify that the integration and authentication is done correctly.
         :return: response with the merchant name and url
         """
         r = requests.get('%s/ping' % self.api_url, headers=self.headers)
@@ -52,7 +52,7 @@ class GlobeePayment:
 
     def check_required_fields(self):
         """
-        checks all required fields
+        Checks all required fields.
         :return: returns True if required fields are set
         """
         try:
@@ -70,7 +70,7 @@ class GlobeePayment:
 
     def create_request(self):
         """
-        creates a new payment request
+        Creates a new payment request.
         :return: payment url
         """
         r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.payment_data)
@@ -90,8 +90,8 @@ class GlobeePayment:
 
     def get_payment_by_id(self, payment_id=None):
         """
-        fetches a previously created payment request by payment_id.
-        :param payment_id:
+        Fetches a previously created payment request by payment_id.
+        :param payment_id: the payment id that identifies the payment request
         :return: payment data
         """
         payment_id = self.payment_id if payment_id is None else payment_id
@@ -105,8 +105,8 @@ class GlobeePayment:
 
     def update_payment_request(self, payment_id=None, payment_data=None):
         """
-        updates an existing payment request
-        :param payment_id: payment id
+        Updates an existing payment request.
+        :param payment_id: the payment id that identifies the payment request
         :param payment_data: dict with payment data
         :return: response data
         """
@@ -130,9 +130,44 @@ class GlobeePayment:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
+    def get_payment_details(self, payment_id=None):
+        """
+        Returns the accepted crypto-currencies and associated address information for the payment-request associated with the given id.
+        :param payment_id: the payment id that identifies the payment request
+        :return: return payment details like accepted crypto-currencies and associated address information
+        """
+        payment_id = self.payment_id if payment_id is None else payment_id
+        if payment_id is None:
+            raise ValidationError('payment_id is None')
+        r = requests.get('%s/payment-request/%s/payment-methods' % (self.api_url, payment_id), headers=self.headers)
+        response = r.json()
+        if r.status_code == 200 and response['success'] is True:
+            return response['data']
+        raise ValidationError('status code: %s - %s' % (r.status_code, response))
+
+    def get_payment_currency_details(self, curreny_id, payment_id=None, address_id=None):
+        """
+        Generates and returns the payment details for a given payment request and payment currency.
+        :param curreny_id: one of the currency id's: BTC, XMR, LTC, DOGE, ETH, XRP etc.
+        :param payment_id: the payment id that identifies the payment request
+        :param address_id: the address id if it has been assigned. Examples: default, lightning_address
+        :return: returns the payment details for a given payment request and payment currency
+        """
+        payment_id = self.payment_id if payment_id is None else payment_id
+        if payment_id is None:
+            raise ValidationError('payment_id is None')
+        url = '%s/payment-request/%s/addresses/%s' % (self.api_url, payment_id, curreny_id)
+        if address_id is not None:
+            url = '%s/%s' % (url, address_id)
+        r = requests.get(url, headers=self.headers)
+        response = r.json()
+        if r.status_code == 200 and response['success'] is True:
+            return response['data']
+        raise ValidationError('status code: %s - %s' % (r.status_code, response))
+
     def get_payment_methods(self):
         """
-        this returns the merchant account's accepted crypto-currencies
+        This returns the merchant account's accepted crypto-currencies.
         :return: returns accepted crypto-currencies
         """
         r = requests.get('%s/account/payment-methods' % self.api_url, headers=self.headers)
