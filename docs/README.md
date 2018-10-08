@@ -6,8 +6,8 @@
 * [Create payment](#create-globee-payment)
 * [Get payment by ID](#get-an-existing-payment-by-id)
 * [Update payment](#update-an-existing-payment)
-* [Get payment details](#get payment details)
-* [Get payment details for payment request and currency](#get payment currency_details)
+* [Get payment details](#get-payment-details)
+* [Get payment details for payment request and currency](#get-payment-currency-details)
 * [Get payment methods](#get-payment-methods)
 * [Get IPN signal](#get-globee-ipn-signal)
 
