@@ -94,8 +94,8 @@ class GlobeePayment:
         :return: payment data
         """
         payment_id = payment_id or self.payment_id
-        if payment_id is None:
-            raise ValidationError('payment_id is None')
+        if not payment_id:
+            raise ValidationError('payment_id is None/empty')
 
         r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
@@ -113,10 +113,10 @@ class GlobeePayment:
         payment_id = payment_id or self.payment_id
         payment_data = payment_data or self.payment_data
 
-        if payment_id is None:
-            raise ValidationError('payment_id is None')
-        elif payment_data is None:
-            raise ValidationError('payment_data is None')
+        if not payment_id:
+            raise ValidationError('payment_id is None/empty')
+        elif not payment_data:
+            raise ValidationError('payment_data is None/empty')
 
         try:
             email = self.payment_data['customer']['email']
@@ -141,8 +141,8 @@ class GlobeePayment:
         :return: return payment details like accepted crypto-currencies and associated address information
         """
         payment_id = payment_id or self.payment_id
-        if payment_id is None:
-            raise ValidationError('payment_id is None')
+        if not payment_id:
+            raise ValidationError('payment_id is None/empty')
 
         r = requests.get('%s/payment-request/%s/payment-methods' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
@@ -159,11 +159,11 @@ class GlobeePayment:
         :return: returns the payment details for a given payment request and payment currency
         """
         payment_id = payment_id or self.payment_id
-        if payment_id is None:
-            raise ValidationError('payment_id is None')
+        if not payment_id:
+            raise ValidationError('payment_id is None/empty')
 
         url = '%s/payment-request/%s/addresses/%s' % (self.api_url, payment_id, currency_id)
-        if address_id is not None:
+        if address_id:
             url += '/%s' % address_id
 
         r = requests.get(url, headers=self.headers)
