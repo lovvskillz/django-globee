@@ -225,7 +225,7 @@ class GlobeeUpdatePaymentTestCase(TestCase):
         }
         globee_payment.payment_data = updated_data
         with self.assertRaises(KeyError):
-            response = globee_payment.update_payment_request()
+            globee_payment.update_payment_request()
 
 
 @override_settings(GLOBEE_TESTNET=True)
