@@ -9,7 +9,7 @@ class GlobeePayment:
     Globee Payment
     """
 
-    def __init__(self, payment_data=None, payment_id=None):
+    def __init__(self, payment_data: dict = None, payment_id: str = None):
         """
         Init Globee payment
         :param payment_data: dict with payment data
@@ -87,7 +87,7 @@ class GlobeePayment:
         """
         return self.redirect_url
 
-    def get_payment_by_id(self, payment_id=None):
+    def get_payment_by_id(self, payment_id: str = None):
         """
         Fetches a previously created payment request by payment_id.
         :param payment_id: the payment id that identifies the payment request
@@ -103,7 +103,7 @@ class GlobeePayment:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
-    def update_payment_request(self, payment_id=None, payment_data=None):
+    def update_payment_request(self, payment_id: str = None, payment_data: dict = None):
         """
         Updates an existing payment request.
         :param payment_id: the payment id that identifies the payment request
@@ -134,7 +134,7 @@ class GlobeePayment:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
-    def get_payment_details(self, payment_id=None):
+    def get_payment_details(self, payment_id: str = None):
         """
         Returns the accepted crypto-currencies and associated address information for the payment-request associated with the given id.
         :param payment_id: the payment id that identifies the payment request
@@ -150,10 +150,10 @@ class GlobeePayment:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
-    def get_payment_currency_details(self, curreny_id, payment_id=None, address_id=None):
+    def get_payment_currency_details(self, currency_id: str, payment_id: str = None, address_id: str = None):
         """
         Generates and returns the payment details for a given payment request and payment currency.
-        :param curreny_id: one of the currency id's: BTC, XMR, LTC, DOGE, ETH, XRP etc.
+        :param currency_id: one of the currency id's: BTC, XMR, LTC, DOGE, ETH, XRP etc.
         :param payment_id: the payment id that identifies the payment request
         :param address_id: the address id if it has been assigned. Examples: default, lightning_address
         :return: returns the payment details for a given payment request and payment currency
@@ -162,7 +162,7 @@ class GlobeePayment:
         if payment_id is None:
             raise ValidationError('payment_id is None')
 
-        url = '%s/payment-request/%s/addresses/%s' % (self.api_url, payment_id, curreny_id)
+        url = '%s/payment-request/%s/addresses/%s' % (self.api_url, payment_id, currency_id)
         if address_id is not None:
             url += '/%s' % address_id
 
