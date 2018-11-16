@@ -61,10 +61,8 @@ class GlobeePayment:
                 raise ValidationError('total is not a int or float!')
         except KeyError as e:
             raise KeyError("%s not set" % e)
-        try:
-            validate_email(self.payment_data['customer']['email'])
-        except ValidationError as e:
-            raise ValidationError(e)
+
+        validate_email(self.payment_data['customer']['email'])
         return True
 
     def create_request(self):
@@ -123,10 +121,7 @@ class GlobeePayment:
         except KeyError as e:
             raise KeyError("%s not set" % e)
 
-        try:
-            validate_email(payment_data['customer']['email'])
-        except ValidationError as e:
-            raise ValidationError(e)
+        validate_email(payment_data['customer']['email'])
 
         r = requests.put('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=payment_data)
         response = r.json()
