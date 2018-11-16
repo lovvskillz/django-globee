@@ -1,6 +1,7 @@
+import requests
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
-import requests
 from django.core.validators import validate_email
 
 
@@ -41,8 +42,7 @@ class GlobeePayment:
         Sends a ping to verify that the integration and authentication is done correctly.
         :return: response with the merchant name and url
         """
-        r = requests.get('%s/ping' % self.api_url, headers=self.headers)
-        response = r.json()
+        response = requests.get('%s/ping' % self.api_url, headers=self.headers).json()
         if r.status_code == 200:
             if response['success']:
                 return response
@@ -58,7 +58,7 @@ class GlobeePayment:
             total = self.payment_data['total']
             email = self.payment_data['customer']['email']
             if not isinstance(total, (int, float)):
-                raise ValidationError('total is not a int or float!')
+                raise ValidationError('total is not an int, nor float!')
         except KeyError as e:
             raise KeyError("%s not set" % e)
 
@@ -70,8 +70,7 @@ class GlobeePayment:
         Creates a new payment request.
         :return: payment url
         """
-        r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.payment_data)
-        response = r.json()
+        response = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.payment_data).json()
         if r.status_code == 200 and response['success'] is True:
             self.redirect_url = response['data']['redirect_url']
             self.payment_id = response['data']['id']
@@ -95,8 +94,7 @@ class GlobeePayment:
         if not payment_id:
             raise ValidationError('payment_id is None/empty')
 
-        r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
-        response = r.json()
+        response = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers).json()
         if r.status_code == 200 and response['success'] is True:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
@@ -123,8 +121,7 @@ class GlobeePayment:
 
         validate_email(payment_data['customer']['email'])
 
-        r = requests.put('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=payment_data)
-        response = r.json()
+        response = requests.put('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=payment_data).json()
         if r.status_code == 200 and response['success'] is True:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
@@ -139,8 +136,7 @@ class GlobeePayment:
         if not payment_id:
             raise ValidationError('payment_id is None/empty')
 
-        r = requests.get('%s/payment-request/%s/payment-methods' % (self.api_url, payment_id), headers=self.headers)
-        response = r.json()
+        r = requests.get('%s/payment-request/%s/payment-methods' % (self.api_url, payment_id), headers=self.headers).json()
         if r.status_code == 200 and response['success'] is True:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
@@ -161,8 +157,7 @@ class GlobeePayment:
         if address_id:
             url += '/%s' % address_id
 
-        r = requests.get(url, headers=self.headers)
-        response = r.json()
+        response = requests.get(url, headers=self.headers).json()
         if r.status_code == 200 and response['success'] is True:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
@@ -172,8 +167,8 @@ class GlobeePayment:
         This returns the merchant account's accepted crypto-currencies.
         :return: returns accepted crypto-currencies
         """
-        r = requests.get('%s/account/payment-methods' % self.api_url, headers=self.headers)
-        response = r.json()
+        response = requests.get('%s/account/payment-methods' % self.api_url, headers=self.headers).json()
         if r.status_code == 200 and response['success'] is True:
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
+
