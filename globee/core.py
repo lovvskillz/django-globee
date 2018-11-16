@@ -24,14 +24,20 @@ class GlobeePayment:
         """
         self.payment_data = dict() if payment_data is None else payment_data
         self.payment_id = payment_id
-        self.test_mode = getattr(settings, 'GLOBEE_TEST_MODE', True)
+        self.redirect_url = None
+        self.testnet = getattr(settings, 'GLOBEE_TEST_MODE', True)
+
         self.auth_key = getattr(settings, 'GLOBEE_AUTH_KEY', None)
+
         if self.auth_key is None:
             raise ValidationError('GLOBEE_AUTH_KEY not found!')
-        if not isinstance(self.auth_key, str):
+        elif not isinstance(self.auth_key, str):
             raise ValidationError('GLOBEE_AUTH_KEY is not a string!')
-        if self.test_mode:
-            self.api_url = 'https://test.globee.com/payment-api/v1'
+        elif not self.auth_key:
+            raise Validationerror('GLOBEE_AUTH_KEY is empty!')
+
+        self.api_url = 'https://%sglobee.com/payment-api/v1' % ('test.' if self.testnet else '')
+
         self.headers = {
             'Accept': 'application/json',
             'X-AUTH-KEY': self.auth_key
