@@ -93,9 +93,10 @@ class GlobeePayment:
         :param payment_id: the payment id that identifies the payment request
         :return: payment data
         """
-        payment_id = self.payment_id if payment_id is None else payment_id
+        payment_id = payment_id or self.payment_id
         if payment_id is None:
             raise ValidationError('payment_id is None')
+
         r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
         if r.status_code == 200 and response['success'] is True:
@@ -109,20 +110,24 @@ class GlobeePayment:
         :param payment_data: dict with payment data
         :return: response data
         """
-        payment_id = self.payment_id if payment_id is None else payment_id
-        payment_data = self.payment_data if payment_data is None else payment_data
+        payment_id = payment_id or self.payment_id
+        payment_data = payment_data or self.payment_data
+
         if payment_id is None:
             raise ValidationError('payment_id is None')
-        if payment_data is None:
+        elif payment_data is None:
             raise ValidationError('payment_data is None')
+
         try:
             email = self.payment_data['customer']['email']
         except KeyError as e:
             raise KeyError("%s not set" % e)
+
         try:
             validate_email(payment_data['customer']['email'])
         except ValidationError as e:
             raise ValidationError(e)
+
         r = requests.put('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=payment_data)
         response = r.json()
         if r.status_code == 200 and response['success'] is True:
@@ -135,9 +140,10 @@ class GlobeePayment:
         :param payment_id: the payment id that identifies the payment request
         :return: return payment details like accepted crypto-currencies and associated address information
         """
-        payment_id = self.payment_id if payment_id is None else payment_id
+        payment_id = payment_id or self.payment_id
         if payment_id is None:
             raise ValidationError('payment_id is None')
+
         r = requests.get('%s/payment-request/%s/payment-methods' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
         if r.status_code == 200 and response['success'] is True:
@@ -152,12 +158,14 @@ class GlobeePayment:
         :param address_id: the address id if it has been assigned. Examples: default, lightning_address
         :return: returns the payment details for a given payment request and payment currency
         """
-        payment_id = self.payment_id if payment_id is None else payment_id
+        payment_id = payment_id or self.payment_id
         if payment_id is None:
             raise ValidationError('payment_id is None')
+
         url = '%s/payment-request/%s/addresses/%s' % (self.api_url, payment_id, curreny_id)
         if address_id is not None:
-            url = '%s/%s' % (url, address_id)
+            url += '/%s' % address_id
+
         r = requests.get(url, headers=self.headers)
         response = r.json()
         if r.status_code == 200 and response['success'] is True:
