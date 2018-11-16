@@ -46,5 +46,7 @@ class GlobeeIPN(models.Model):
     created_at = models.DateTimeField()
     expires_at = models.DateTimeField()
 
+    objects = models.Manager()
+
     def send_valid_signal(self):
         globee_valid_ipn.send(sender=self)
