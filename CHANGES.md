@@ -1,5 +1,14 @@
 # Changes
 
+## 2018-11-16 1.3.0
+- IPN view improvements
+- removed static variables from the `GlobeePayment` class
+- check empty strings and `NoneType`
+- fix error message in `ping()`
+
+**breaking changes**
+- rename `GLOBEE_TEST_MODE` into `GLOBEE_TESTNET`
+
 ## 2018-10-09 1.2.0
 - `update_payment_request()` updates an existing payment request 
 - `get_payment_methods()` returns the merchant account's accepted crypto-currencies
