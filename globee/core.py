@@ -8,13 +8,6 @@ class GlobeePayment:
     """
     Globee Payment
     """
-    payment_data = dict()
-    payment_id = None
-    redirect_url = None
-    test_mode = True
-    auth_key = None
-    api_url = 'https://globee.com/payment-api/v1'
-    headers = None
 
     def __init__(self, payment_data=None, payment_id=None):
         """
@@ -22,10 +15,9 @@ class GlobeePayment:
         :param payment_data: dict with payment data
         :param payment_id: the payment id that identifies the payment request
         """
-        self.payment_data = dict() if payment_data is None else payment_data
+        self.payment_data = payment_data or dict()
         self.payment_id = payment_id
         self.redirect_url = None
-        self.testnet = getattr(settings, 'GLOBEE_TEST_MODE', True)
 
         self.auth_key = getattr(settings, 'GLOBEE_AUTH_KEY', None)
 
@@ -36,6 +28,7 @@ class GlobeePayment:
         elif not self.auth_key:
             raise Validationerror('GLOBEE_AUTH_KEY is empty!')
 
+        self.testnet = getattr(settings, 'GLOBEE_TEST_MODE', True)
         self.api_url = 'https://%sglobee.com/payment-api/v1' % ('test.' if self.testnet else '')
 
         self.headers = {
