@@ -24,7 +24,7 @@ You can find the GloBee API docs [here](https://globee.com/docs/payment-api/v1).
 3. Include your globee key and test or live env in your project settings.py
 ```python
     GLOBEE_AUTH_KEY = "YOUR GLOBEE X-AUTH-KEY"
-    GLOBEE_TEST_MODE = True # or False
+    GLOBEE_TESTNET = True # or False
 ```
 
 

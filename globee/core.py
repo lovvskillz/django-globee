@@ -29,7 +29,7 @@ class GlobeePayment:
         elif not self.auth_key:
             raise Validationerror('GLOBEE_AUTH_KEY is empty!')
 
-        self.testnet = getattr(settings, 'GLOBEE_TEST_MODE', True)
+        self.testnet = getattr(settings, 'GLOBEE_TESTNET', True)
         self.api_url = 'https://%sglobee.com/payment-api/v1' % ('test.' if self.testnet else '')
 
         self.headers = {
