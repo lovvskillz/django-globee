@@ -75,7 +75,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
             globee_payment.check_required_fields()
 
 
-@override_settings(GLOBEE_TEST_MODE=True)
+@override_settings(GLOBEE_TESTNET=True)
 class GlobeeCreatePaymentTestCase(TestCase):
 
     def test_create_payment_valid(self):
@@ -139,7 +139,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
             globee_payment.create_request()
 
 
-@override_settings(GLOBEE_TEST_MODE=True)
+@override_settings(GLOBEE_TESTNET=True)
 class GlobeePaymentIPNTestCase(TestCase):
 
     def setUp(self):
@@ -175,7 +175,7 @@ class GlobeePaymentIPNTestCase(TestCase):
         self.assertEqual(count_before + 1, GlobeeIPN.objects.all().count())
 
 
-@override_settings(GLOBEE_TEST_MODE=True)
+@override_settings(GLOBEE_TESTNET=True)
 class GlobeeUpdatePaymentTestCase(TestCase):
 
     def test_update_payment_valid(self):
@@ -228,7 +228,7 @@ class GlobeeUpdatePaymentTestCase(TestCase):
             response = globee_payment.update_payment_request()
 
 
-@override_settings(GLOBEE_TEST_MODE=True)
+@override_settings(GLOBEE_TESTNET=True)
 class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
 
     def test_get_payment_methods_valid(self):
@@ -237,7 +237,7 @@ class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
         self.assertIsInstance(response, list)
 
 
-@override_settings(GLOBEE_TEST_MODE=True)
+@override_settings(GLOBEE_TESTNET=True)
 class GlobeePaymentDetailsTestCase(TestCase):
 
     def test_get_payment_details_valid(self):
