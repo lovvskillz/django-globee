@@ -15,6 +15,7 @@ setup(
     license='MIT License',
     description='A Django app for integrating Globee Payments',
     long_description=README,
+    long_description_content_type='text/markdown',
     url='https://github.com/lovvskillz/django-globee',
     install_requires=[
             'Django>=2.0',
