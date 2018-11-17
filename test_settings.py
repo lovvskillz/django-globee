@@ -16,4 +16,4 @@ DATABASES = {
     }
 }
 
-GLOBEE_AUTH_KEY = os.environ['GLOBEE_AUTH_KEY']
+GLOBEE_AUTH_KEY = os.environ.get('GLOBEE_AUTH_KEY')
