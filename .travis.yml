@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+env:
+  - DJANGO=2.0 DB=sqlite
+  - DJANGO=2.1 DB=sqlite
+install:
+  - pip install -q Django==$DJANGO
+  - python setup.py -q install
+script:
+  - python manage.py test globee
