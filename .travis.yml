@@ -1,20 +1,24 @@
 dist: xenial
 language: python
 python:
-  - "3.5"
-  - "3.6"
-  - "3.7"
+- '3.5'
+- '3.6'
+- '3.7'
 env:
+  matrix:
   - DJANGO=2.0 DB=sqlite
   - DJANGO=2.1 DB=sqlite
+  global:
+    secure: j+4nJt95GOCbHbnnKj+3t74oX3Eo3phi+VWD+ZiEFBlOtSX8PlMj8MHk7vmAOeDdtkvsoDxUMZ28Ud8GI0Jv+Rv/tn0m0xLd5eu24wrtsFkYI2Z2LtE3BGTOk1ifJHmIHQ+JW7rk0IwfgAYFe9xIopncRfGscqxIiAsvjlSWnPCYoV7BsqpoCpLG+OEfzIv6M0RdmJWuF9Cdm+TwX83fs9JE4Z39/pb7Zu774bBf9REfWjv7jM+TE/qZ0gu2O1q/2D+2ozYtQT1Ki+uPQu5bWxd5LQGFwjALFlt3rD2/JhmQX+ACLpxEXafnKRV++wTQAfV/rBI2WCqM5e0noBpZtg0KpVCAbsryPucCH0TD8BowX2eUTQDJth8oWjPn5qBVI68HTf2Ks9xGLuQUreJOak7o42g2FiUEiDw9+VAa96ikt3YnREFaI55FgJ/RKi3enJW7PRurMQa8QhUGTjUMCfuLd1sx4B7goEbD2rGdsFlt3s8cFjh5TLRUhWRiPWfw4PE3mui/eeQ73E6MXaLIjPL9AkcjtVajtZG9p5Z8I22Z++nksPx4AFg9WAYEwY1qwYDD6rnSaMg1RHJH75YRd9s5TSgd+/vXKFN3whbW3YfwNpojqKxciyr5y3QPKngjxhSli3tIgYNoY6lHnJsFjBBrT3u2eQEHucZuCDdQNYs=
 install:
-  - pip install -q Django==$DJANGO
-  - pip install coverage
-  - python setup.py -q install
-  - django-admin.py startproject my_proj .
-  - cp --remove-destination test_settings.py my_proj/settings.py
-  - python manage.py migrate
+- pip install -q Django==$DJANGO
+- pip install coverage
+- python setup.py -q install
+- django-admin.py startproject my_proj .
+- cp --remove-destination test_settings.py my_proj/settings.py
+- python manage.py migrate
 script:
-  - coverage run --source=. manage.py test globee
+- python manage.py test globee
+- coverage run --source=. manage.py test globee
 after_success:
-  - coveralls
+- coveralls
