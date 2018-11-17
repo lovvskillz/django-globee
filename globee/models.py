@@ -33,7 +33,7 @@ class GlobeeIPN(models.Model):
         (SPEED_STATUS_GLOBEE_HIGH, 'high speed with / risk'),
     )
 
-    payment_status = models.CharField(max_length=12, choices=PAYMENT_STATUS_CHOICES, help_text='Globee payment status')
+    payment_status = models.CharField(max_length=12, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_GLOBEE_UNPAID, help_text='Globee payment status')
     payment_id = models.CharField(max_length=255, unique=True, help_text='Globee payment ID')
     total = models.FloatField(help_text='The amount in fiat or crypto-currency')
     customer_email = models.EmailField(help_text='The email address of your customer')
