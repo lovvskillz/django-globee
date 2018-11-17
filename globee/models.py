@@ -50,3 +50,7 @@ class GlobeeIPN(models.Model):
 
     def send_valid_signal(self):
         globee_valid_ipn.send(sender=self)
+
+    def __str__(self):
+        return 'GloBee payment #%s: (%s), total: %.2f %s' % (self.payment_id, self.payment_status, self.total, self.currency)
+
