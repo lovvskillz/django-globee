@@ -4,12 +4,13 @@ python:
   - "3.6"
   - "3.7"
 env:
-  - DJANGO=2.0 DB=sqlite DJANGO_SETTINGS_MODULE=test_settings
-  - DJANGO=2.1 DB=sqlite DJANGO_SETTINGS_MODULE=test_settings
+  - DJANGO=2.0 DB=sqlite
+  - DJANGO=2.1 DB=sqlite
 install:
   - pip install -q Django==$DJANGO
   - python setup.py -q install
   - django-admin.py startproject my_proj .
+  - cp --remove-destination test_settings.py my_proj/settings.py
   - python manage.py migrate
 script:
   - python manage.py test globee
