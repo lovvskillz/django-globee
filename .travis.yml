@@ -4,9 +4,8 @@ python:
   - "3.6"
   - "3.7"
 env:
-  - DJANGO=2.0 DB=sqlite
-  - DJANGO=2.1 DB=sqlite
-  - DJANGO_SETTINGS_MODULE=test_settings
+  - DJANGO=2.0 DB=sqlite DJANGO_SETTINGS_MODULE=test_settings
+  - DJANGO=2.1 DB=sqlite DJANGO_SETTINGS_MODULE=test_settings
 install:
   - pip install -q Django==$DJANGO
   - python setup.py -q install
