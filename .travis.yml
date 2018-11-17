@@ -9,7 +9,7 @@ env:
 install:
   - pip install -q Django==$DJANGO
   - python setup.py -q install
-  - django-admin.py startproject my_proj
+  - django-admin.py startproject my_proj .
   - cd my_proj
   - python manage.py migrate
 script:
