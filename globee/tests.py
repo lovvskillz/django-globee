@@ -133,6 +133,11 @@ class GlobeeCreatePaymentTestCase(TestCase):
         with self.assertRaises(ValidationError):
             globee_payment.get_payment_by_id("INVALID_KEY")
 
+    def test_get_payment_invalid_empty_key(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_by_id()
+
     def test_create_payment_invalid_empty_data(self):
         globee_payment = GlobeePayment()
         with self.assertRaises(KeyError):
