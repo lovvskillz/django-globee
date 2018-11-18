@@ -33,13 +33,13 @@ class GlobeeIPN(models.Model):
         (SPEED_STATUS_GLOBEE_HIGH, 'high speed with / risk'),
     )
 
-    payment_status = models.CharField(max_length=12, choices=PAYMENT_STATUS_CHOICES, help_text='Globee payment status')
-    payment_id = models.CharField(max_length=255, help_text='Globee payment ID')
+    payment_status = models.CharField(max_length=12, choices=PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_GLOBEE_UNPAID, help_text='Globee payment status')
+    payment_id = models.CharField(max_length=255, unique=True, help_text='Globee payment ID')
     total = models.FloatField(help_text='The amount in fiat or crypto-currency')
     customer_email = models.EmailField(help_text='The email address of your customer')
     customer_name = models.CharField(max_length=50, null=True, blank=True, help_text='The name of your customer')
     currency = models.CharField(max_length=3, default='USD', help_text='ISO 4217 currency codes')
-    custom_payment_id = models.CharField(max_length=255, blank=True, null=True, help_text='A reference or custom identifier that you can use to link the payment back to your system')
+    custom_payment_id = models.CharField(max_length=255, unique=True, null=True, help_text='A reference or custom identifier that you can use to link the payment back to your system')
     callback_data = models.CharField(max_length=255, blank=True, null=True, help_text='Passthrough data that will be returned in the IPN callback')
     notification_email = models.CharField(max_length=255, blank=True, null=True, help_text='An email address that the system will send a notification email to once the payment has been confirmed')
     confirmation_speed = models.CharField(max_length=50, choices=SPEED_STATUS_CHOICES, default=SPEED_STATUS_GLOBEE_MEDIUM)
@@ -50,3 +50,7 @@ class GlobeeIPN(models.Model):
 
     def send_valid_signal(self):
         globee_valid_ipn.send(sender=self)
+
+    def __str__(self):
+        return 'GloBee payment #%s: (%s), total: %.2f %s' % (self.payment_id, self.payment_status, self.total, self.currency)
+
