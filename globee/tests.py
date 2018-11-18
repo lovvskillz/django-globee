@@ -112,6 +112,26 @@ class GlobeeCreatePaymentTestCase(TestCase):
         globee_payment = GlobeePayment(payment_data=data)
         self.assertTrue(globee_payment.check_required_fields())
         self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        self.assertIn("https://test.globee.com/", globee_payment.get_payment_url())
+
+    def test_get_payment_valid(self):
+        data = {
+            'total': 13.37,
+            'currency': 'EUR',
+            'customer': {
+                'name': 'foobar',
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment = GlobeePayment(payment_data=data)
+        self.assertTrue(globee_payment.check_required_fields())
+        self.assertIn("https://test.globee.com/", globee_payment.create_request())
+        self.assertIsInstance(globee_payment.get_payment_by_id(globee_payment.payment_id), dict)
+
+    def test_get_payment_invalid(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_by_id("INVALID_KEY")
 
     def test_create_payment_invalid_empty_data(self):
         globee_payment = GlobeePayment()
