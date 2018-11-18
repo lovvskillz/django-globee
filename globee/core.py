@@ -47,7 +47,6 @@ class GlobeePayment:
         if r.status_code == 200:
             if response['success']:
                 return response
-            raise ValidationError('result: %s' % response['result'])
         raise ValidationError("status code %s: %s" % (r.status_code, response['message']))
 
     def check_required_fields(self):
