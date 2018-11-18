@@ -60,9 +60,9 @@ class GlobeePayment:
             if not isinstance(total, (int, float)):
                 raise ValidationError('total is not an int, nor float!')
         except KeyError as e:
-            raise KeyError("%s not set" % e)
+            raise ValidationError("key '%s' not set" % e)
 
-        validate_email(self.payment_data['customer']['email'])
+        validate_email(email)
         return True
 
     def create_request(self):
