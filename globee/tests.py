@@ -315,6 +315,41 @@ class GlobeeUpdatePaymentTestCase(TestCase):
         with self.assertRaises(KeyError):
             globee_payment.update_payment_request()
 
+    def test_update_payment_invalid_payment_id_is_none(self):
+        globee_payment = GlobeePayment()
+        custom_payment_id = "NEWID"
+        custom_store_reference = "NEWSTOREREF"
+        updated_data = {
+            "custom_payment_id": custom_payment_id,
+            "custom_store_reference": custom_store_reference,
+        }
+        globee_payment.payment_data = updated_data
+        globee_payment.payment_id = None
+        with self.assertRaises(ValidationError):
+            globee_payment.update_payment_request()
+
+    def test_update_payment_invalid_payment_data_is_none(self):
+        globee_payment = GlobeePayment()
+        globee_payment.payment_data = None
+        globee_payment.payment_id = "SOME KEY"
+        with self.assertRaises(ValidationError):
+            globee_payment.update_payment_request()
+
+    def test_update_payment_invalid_payment_id(self):
+        globee_payment = GlobeePayment()
+        custom_payment_id = "NEWID"
+        custom_store_reference = "NEWSTOREREF"
+        updated_data = {
+            "custom_payment_id": custom_payment_id,
+            "custom_store_reference": custom_store_reference,
+            'customer': {
+                'email': 'foobar@example.com'
+            },
+        }
+        globee_payment.payment_data = updated_data
+        with self.assertRaises(ValidationError):
+            globee_payment.update_payment_request("INVALID_KEY")
+
 
 @override_settings(GLOBEE_TESTNET=True)
 class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
@@ -323,6 +358,12 @@ class GlobeeAcceptedPaymentMethodsTestCase(TestCase):
         globee_payment = GlobeePayment()
         response = globee_payment.get_payment_methods()
         self.assertIsInstance(response, list)
+
+    @override_settings(GLOBEE_AUTH_KEY="INVALID_KEY")
+    def test_get_payment_methods_invalid(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_methods()
 
 
 @override_settings(GLOBEE_TESTNET=True)
@@ -357,3 +398,23 @@ class GlobeePaymentDetailsTestCase(TestCase):
         self.assertIn("https://test.globee.com/", globee_payment.create_request())
         response = globee_payment.get_payment_currency_details("BTC")
         self.assertIsInstance(response, dict)
+
+    def test_get_payment_details_invalid_payment_id_is_none(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_details()
+
+    def test_get_payment_details_invalid_payment_id_is_invalid(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_details("INVALID_KEY")
+
+    def test_get_payment_details_for_currency_invalid_payment_id_is_none(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_currency_details("BTC")
+
+    def test_get_payment_details_for_currency_invalid_payment_id_is_invalid(self):
+        globee_payment = GlobeePayment()
+        with self.assertRaises(ValidationError):
+            globee_payment.get_payment_currency_details("BTC", "INVALID_KEY")
