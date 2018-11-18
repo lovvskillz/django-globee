@@ -8,6 +8,28 @@ from globee.core import GlobeePayment
 from globee.models import GlobeeIPN
 
 
+class GlobeeInitTestCase(TestCase):
+
+    def test_init_valid(self):
+        globee_payment = GlobeePayment()
+        self.assertTrue(globee_payment.ping())
+
+    @override_settings(GLOBEE_AUTH_KEY=None)
+    def test_init_invalid_key_is_none(self):
+        with self.assertRaises(ValidationError):
+            globee_payment = GlobeePayment()
+
+    @override_settings(GLOBEE_AUTH_KEY=1)
+    def test_init_invalid_key_isnt_a_string(self):
+        with self.assertRaises(ValidationError):
+            globee_payment = GlobeePayment()
+
+    @override_settings(GLOBEE_AUTH_KEY="")
+    def test_init_invalid_key_is_empty(self):
+        with self.assertRaises(ValidationError):
+            globee_payment = GlobeePayment()
+
+
 class GlobeePingTestCase(TestCase):
 
     def test_ping_valid(self):
