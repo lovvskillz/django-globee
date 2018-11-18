@@ -3,7 +3,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/lovvskillz/django-globee/master/LICENSE)
 [![PyPI version](https://badge.fury.io/py/django-globee.svg)](https://badge.fury.io/py/django-globee)
 [![Build Status](https://travis-ci.org/lovvskillz/django-globee.svg?branch=master)](https://travis-ci.org/lovvskillz/django-globee)
-[![Coverage Status](https://coveralls.io/repos/github/lovvskillz/django-globee/badge.svg)](https://coveralls.io/github/lovvskillz/django-globee)
+[![Coverage Status](https://coveralls.io/repos/github/lovvskillz/django-globee/badge.svg?branch=master)](https://coveralls.io/github/lovvskillz/django-globee?branch=master)
 
 django-globee is a Django app to integrate [GloBee](https://globee.com/) Payments.
 
