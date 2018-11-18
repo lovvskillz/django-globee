@@ -60,7 +60,7 @@ class GlobeePayment:
             if not isinstance(total, (int, float)):
                 raise ValidationError('total is not an int, nor float!')
         except KeyError as e:
-            raise ValidationError("key '%s' not set" % e)
+            raise ValidationError("key %s not set" % e)
 
         validate_email(email)
         return True
