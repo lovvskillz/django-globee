@@ -27,6 +27,7 @@ def ping():
 ```python
 from random import randint
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ValidationError
 from django.urls.base import reverse
 from globee.core import GlobeePayment
 
