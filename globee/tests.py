@@ -85,7 +85,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
             },
         }
         globee_payment = GlobeePayment(payment_data=data)
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
 
     def test_required_fields_invalid_email_not_set(self):
@@ -93,7 +93,7 @@ class GlobeeRequiredFieldsTestCase(TestCase):
             'total': 13.37,
         }
         globee_payment = GlobeePayment(payment_data=data)
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
 
 
@@ -140,7 +140,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
 
     def test_create_payment_invalid_empty_data(self):
         globee_payment = GlobeePayment()
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValidationError):
             globee_payment.check_required_fields()
         with self.assertRaises(ValidationError):
             globee_payment.create_request()
@@ -312,7 +312,7 @@ class GlobeeUpdatePaymentTestCase(TestCase):
             "custom_store_reference": custom_store_reference,
         }
         globee_payment.payment_data = updated_data
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValidationError):
             globee_payment.update_payment_request()
 
     def test_update_payment_invalid_payment_id_is_none(self):
