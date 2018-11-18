@@ -20,5 +20,6 @@ install:
 script:
 - python manage.py test globee
 - coverage run --source=. manage.py test globee
+- coverage report -m
 after_success:
 - coveralls
