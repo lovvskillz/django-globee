@@ -262,6 +262,35 @@ class GlobeePaymentIPNTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())
 
+    @override_settings(ROOT_URLCONF='globee.urls')
+    def test_ipn_view_invalid_total(self):
+        count_before = 0
+        self.assertEqual(count_before, GlobeeIPN.objects.all().count())
+        payment_data = {
+            "id": "a1B2c3D4e5F6g7H8i9J0kL",
+            "status": "paid",
+            "total": "ERROR",
+            "currency": "USD",
+            "custom_payment_id": "742",
+            "callback_data": "example data",
+            "customer": {
+                "name": "John Smit",
+                "email": "john.smit@example.com"
+            },
+            "redirect_url": "http:\/\/globee.com\/invoice\/a1B2c3D4e5F6g7H8i9J0kL",
+            "success_url": "https:\/\/www.example.com/success",
+            "cancel_url": "https:\/\/www.example.com/cancel",
+            "ipn_url": "https:\/\/www.example.com/globee/ipn-callback",
+            "notification_email": None,
+            "confirmation_speed": "medium",
+            "expires_at": "2018-01-25 12:31:04",
+            "created_at": "2018-01-25 12:16:04"
+        }
+        client = Client()
+        response = client.generic('POST', reverse('globee-ipn'), bytes(json.dumps(payment_data), 'utf-8'))
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(count_before, GlobeeIPN.objects.all().count())
+
 
 @override_settings(GLOBEE_TESTNET=True)
 class GlobeeUpdatePaymentTestCase(TestCase):
