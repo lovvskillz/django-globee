@@ -119,7 +119,7 @@ class GlobeePayment:
         try:
             email = self.payment_data['customer']['email']
         except KeyError as e:
-            raise KeyError("%s not set" % e)
+            raise ValidationError("%s not set" % e)
 
         validate_email(payment_data['customer']['email'])
 
