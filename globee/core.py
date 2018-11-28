@@ -44,9 +44,8 @@ class GlobeePayment:
         """
         r = requests.get('%s/ping' % self.api_url, headers=self.headers)
         response = r.json()
-        if r.status_code == 200:
-            if response['success']:
-                return response
+        if r.status_code == 200 and response.get('success'):
+            return response
         raise ValidationError("status code %s: %s" % (r.status_code, response['message']))
 
     def check_required_fields(self):
@@ -72,7 +71,7 @@ class GlobeePayment:
         """
         r = requests.post('%s/payment-request' % self.api_url, headers=self.headers, json=self.payment_data)
         response = r.json()
-        if r.status_code == 200 and response['success'] is True:
+        if r.status_code == 200 and response.get('success'):
             self.redirect_url = response['data']['redirect_url']
             self.payment_id = response['data']['id']
             return response['data']['redirect_url']
@@ -97,7 +96,7 @@ class GlobeePayment:
 
         r = requests.get('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
-        if r.status_code == 200 and response['success'] is True:
+        if r.status_code == 200 and response.get('success'):
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
@@ -125,7 +124,7 @@ class GlobeePayment:
 
         r = requests.put('%s/payment-request/%s' % (self.api_url, payment_id), headers=self.headers, json=payment_data)
         response = r.json()
-        if r.status_code == 200 and response['success'] is True:
+        if r.status_code == 200 and response.get('success'):
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
@@ -141,7 +140,7 @@ class GlobeePayment:
 
         r = requests.get('%s/payment-request/%s/payment-methods' % (self.api_url, payment_id), headers=self.headers)
         response = r.json()
-        if r.status_code == 200 and response['success'] is True:
+        if r.status_code == 200 and response.get('success'):
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
@@ -163,7 +162,7 @@ class GlobeePayment:
 
         r = requests.get(url, headers=self.headers)
         response = r.json()
-        if r.status_code == 200 and response['success'] is True:
+        if r.status_code == 200 and response.get('success'):
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
@@ -174,7 +173,7 @@ class GlobeePayment:
         """
         r = requests.get('%s/account/payment-methods' % self.api_url, headers=self.headers)
         response = r.json()
-        if r.status_code == 200 and response['success'] is True:
+        if r.status_code == 200 and response.get('success'):
             return response['data']
         raise ValidationError('status code: %s - %s' % (r.status_code, response))
 
