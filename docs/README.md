@@ -27,6 +27,7 @@ def ping():
 ```python
 from random import randint
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ValidationError
 from django.urls.base import reverse
 from globee.core import GlobeePayment
 
@@ -45,12 +46,19 @@ def my_payment_view(request):
         'ipn_url': request.build_absolute_uri(reverse('globee-ipn')),
     }
     payment = GlobeePayment(payment_data=payment_data)
-    # check required fields for globee payments
-    if payment.check_required_fields():
-        # create payment request
-        redirect_url = payment.create_request()
-        # redirect to globee payment page
-        return HttpResponseRedirect(redirect_url)
+
+    # validate required fields for globee payments
+    try:
+        payment.check_required_fields():
+    except ValidationError as e:
+        # process error
+        print(e)
+
+    # create payment request
+    redirect_url = payment.create_request()
+
+    # redirect to globee payment page
+    return HttpResponseRedirect(redirect_url)
 ```
 
 ### get an existing payment by id
@@ -202,3 +210,4 @@ def crypto_payment_ipn(sender, **kwargs):
         # payment not found or other error
         print(e)
 ```
+
