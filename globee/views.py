@@ -44,10 +44,10 @@ def globee_ipn_view(request):
         payment.send_valid_signal()
     except KeyError as e:
         logger.error('Key %s not found in payment data.' % e)
-        return HttpResponse(status=400)
+        return HttpResponse(status=200)
     except ValueError as e:
         logger.error(e)
-        return HttpResponse(status=400)
+        return HttpResponse(status=200)
 
     return HttpResponse(status=200)
 
