@@ -17,7 +17,7 @@ logger = getLogger(__name__)
 @require_POST
 @csrf_exempt
 def globee_ipn_view(request):
-    paranoid = getattr(settings, 'GLOBEE_PARANOID_MODE')
+    paranoid = getattr(settings, 'GLOBEE_PARANOID_MODE', False)
     payment_data = json_loads(request.body.decode("utf-8"))
 
     pretty_data = json_dumps(payment_data, indent=4, sort_keys=True)
