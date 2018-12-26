@@ -17,3 +17,5 @@ DATABASES = {
 }
 
 GLOBEE_AUTH_KEY = os.environ.get('GLOBEE_AUTH_KEY')
+GLOBEE_PARANOID_MODE = bool(os.environ.get('GLOBEE_PARANOID_MODE'))
+

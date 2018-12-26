@@ -1,8 +1,9 @@
 from datetime import datetime
 from logging import getLogger
 from json import loads as json_loads, dumps as json_dumps
-
 from pytz import utc as pytz_utc
+
+from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -16,6 +17,7 @@ logger = getLogger(__name__)
 @require_POST
 @csrf_exempt
 def globee_ipn_view(request):
+    paranoid = getattr(settings, 'GLOBEE_PARANOID_MODE', False)
     payment_data = json_loads(request.body.decode("utf-8"))
 
     pretty_data = json_dumps(payment_data, indent=4, sort_keys=True)
@@ -44,10 +46,12 @@ def globee_ipn_view(request):
         payment.send_valid_signal()
     except KeyError as e:
         logger.error('Key %s not found in payment data.' % e)
-        return HttpResponse(status=400)
+        status = 200 if paranoid else 400
+        return HttpResponse(status=status)
     except ValueError as e:
         logger.error(e)
-        return HttpResponse(status=400)
+        status = 200 if paranoid else 400
+        return HttpResponse(status=status)
 
     return HttpResponse(status=200)
 
