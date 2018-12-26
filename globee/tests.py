@@ -187,6 +187,7 @@ class GlobeeCreatePaymentTestCase(TestCase):
 
 
 @override_settings(GLOBEE_TESTNET=True)
+@override_settings(GLOBEE_PARANOID_MODE=False)
 class GlobeePaymentIPNTestCase(TestCase):
 
     def setUp(self):
