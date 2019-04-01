@@ -8,6 +8,7 @@ env:
   matrix:
   - DJANGO=2.0 DB=sqlite
   - DJANGO=2.1 DB=sqlite
+  - DJANGO=2.2 DB=sqlite
 install:
 - pip install -q Django==$DJANGO
 - pip install python-coveralls
