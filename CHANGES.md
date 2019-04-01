@@ -1,5 +1,13 @@
 # Changes
 
+## 2019-04-01 1.4.0
+- set `unique=True` for `payment_id` and `custom_payment_id` 
+- set the default payment status to `unpaid`
+- add optional `GLOBEE_PARANOID_MODE` setting
+    - `True` - IPN view will always respond with status code `200`
+    - `False` - IPN view will respond with status code `400` if an `KeyError` or `ValueError` occurs
+
+
 ## 2018-11-16 1.3.0
 - IPN view improvements
 - removed static variables from the `GlobeePayment` class

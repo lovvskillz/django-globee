@@ -12,7 +12,7 @@ You can find the GloBee API docs [here](https://globee.com/docs/payment-api/v1).
 
 ## Quick start
 
-1. Add "globee" to your INSTALLED_APPS setting like this:
+1. Add `globee` to your INSTALLED_APPS setting like this:
 ```python
     INSTALLED_APPS = [
         ...
@@ -27,7 +27,8 @@ You can find the GloBee API docs [here](https://globee.com/docs/payment-api/v1).
 3. Include your globee key and test or live env in your project settings.py
 ```python
     GLOBEE_AUTH_KEY = "YOUR GLOBEE X-AUTH-KEY"
-    GLOBEE_TESTNET = True # or False
+    GLOBEE_TESTNET = True # set this to False in production mode
+    GLOBEE_PARANOID_MODE = False # optional (default is False). True - IPN view will always respond with status code "200"
 ```
 
 
