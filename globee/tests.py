@@ -188,13 +188,13 @@ class GlobeeCreatePaymentTestCase(TestCase):
 
 @override_settings(GLOBEE_TESTNET=True)
 @override_settings(GLOBEE_PARANOID_MODE=False)
+@override_settings(ROOT_URLCONF='globee.urls')
 class GlobeePaymentIPNTestCase(TestCase):
 
     def setUp(self):
         GlobeeIPN.objects.all().delete()
         self.assertEqual(0, GlobeeIPN.objects.count())
 
-    @override_settings(ROOT_URLCONF='globee.urls')
     def test_ipn_view_valid(self):
         count_before = 0
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())
@@ -223,7 +223,6 @@ class GlobeePaymentIPNTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(count_before + 1, GlobeeIPN.objects.all().count())
 
-    @override_settings(ROOT_URLCONF='globee.urls')
     def test_ipn_view_invalid_payment_id_not_provided(self):
         count_before = 0
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())
@@ -251,7 +250,6 @@ class GlobeePaymentIPNTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())
 
-    @override_settings(ROOT_URLCONF='globee.urls')
     def test_ipn_view_invalid_key_error(self):
         count_before = 0
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())
@@ -263,7 +261,6 @@ class GlobeePaymentIPNTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())
 
-    @override_settings(ROOT_URLCONF='globee.urls')
     def test_ipn_view_invalid_total(self):
         count_before = 0
         self.assertEqual(count_before, GlobeeIPN.objects.all().count())

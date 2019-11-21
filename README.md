@@ -28,7 +28,14 @@ You can find the GloBee API docs [here](https://globee.com/docs/payment-api/v1).
 ```python
     GLOBEE_AUTH_KEY = "YOUR GLOBEE X-AUTH-KEY"
     GLOBEE_TESTNET = True # set this to False in production mode
-    GLOBEE_PARANOID_MODE = False # optional (default is False). True - IPN view will always respond with status code "200"
+
+    # False: IPN view will respond with status code "400" if an "KeyError", "ValueError" or "ValidationError" occurs
+    # True: IPN view will always respond with status code "200"
+    GLOBEE_PARANOID_MODE = False # optional (default: False)
+
+    # False: saves the IPN response in the database without further verify checks. see docs on how to verify the payment yourself.
+    # True: fetches the payment information directly from GloBee after the IPN view was called
+    GLOBEE_AUTO_VERIFY = False # optional (default: False)
 ```
 
 

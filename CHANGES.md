@@ -1,7 +1,12 @@
 # Changes
 
+## 2019-11-21 1.5.0
+- add optional `GLOBEE_AUTO_VERIFY` to settings.py
+    - `True` - fetches the payment information directly from GloBee after the IPN view was called
+    - `False` - saves the IPN response in the database without further validation checks
+
 ## 2019-04-01 1.4.0
-- set `unique=True` for `payment_id` and `custom_payment_id` 
+- set `unique=True` for `payment_id` and `custom_payment_id`
 - set the default payment status to `unpaid`
 - add optional `GLOBEE_PARANOID_MODE` setting
     - `True` - IPN view will always respond with status code `200`

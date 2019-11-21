@@ -1,6 +1,8 @@
 from datetime import datetime
 from logging import getLogger
 from json import loads as json_loads, dumps as json_dumps
+
+from django.core.exceptions import ValidationError
 from pytz import utc as pytz_utc
 
 from django.conf import settings
@@ -8,6 +10,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from globee.core import GlobeePayment
 from globee.models import GlobeeIPN
 
 
@@ -18,8 +21,12 @@ logger = getLogger(__name__)
 @csrf_exempt
 def globee_ipn_view(request):
     paranoid = getattr(settings, 'GLOBEE_PARANOID_MODE', False)
-    payment_data = json_loads(request.body.decode("utf-8"))
-
+    auto_validate = getattr(settings, 'GLOBEE_AUTO_VERIFY', False)
+    payment_response = request.body.decode("utf-8")
+    payment_data = json_loads(payment_response)
+    if auto_validate:
+        globee_payment = GlobeePayment()
+        payment_data = globee_payment.get_payment_by_id(payment_data['id'])
     pretty_data = json_dumps(payment_data, indent=4, sort_keys=True)
     logger.debug('Globee POST data: %s' % pretty_data)
 
@@ -48,10 +55,8 @@ def globee_ipn_view(request):
         logger.error('Key %s not found in payment data.' % e)
         status = 200 if paranoid else 400
         return HttpResponse(status=status)
-    except ValueError as e:
+    except (ValueError, ValidationError) as e:
         logger.error(e)
         status = 200 if paranoid else 400
         return HttpResponse(status=status)
-
     return HttpResponse(status=200)
-

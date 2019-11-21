@@ -10,6 +10,7 @@
 * [Get payment details for payment request and currency](#get-payment-currency-details)
 * [Get payment methods](#get-payment-methods)
 * [Get IPN signal](#get-globee-ipn-signal)
+* [Verfify IPN signal](#verify-the-incoming-payment-data)
 
 ### ping
 ```python
@@ -49,7 +50,7 @@ def my_payment_view(request):
 
     # validate required fields for globee payments
     try:
-        payment.check_required_fields():
+        payment.check_required_fields()
     except ValidationError as e:
         # process error
         print(e)
@@ -157,6 +158,7 @@ from globee.signals import globee_valid_ipn
 
 @receiver(globee_valid_ipn)
 def crypto_payment_ipn(sender, **kwargs):
+    # payment / sender contains the payment data sent to the IPN view
     payment = sender
     
     # check if payment is confirmed or use any other payment status
@@ -173,7 +175,7 @@ def crypto_payment_ipn(sender, **kwargs):
         
 ```
 
-if you don't trust the ipn response, you can also get the payment data from GloBee
+### verify the incoming payment data
 
 ```python
 from django.dispatch import receiver
@@ -184,13 +186,14 @@ from globee.core import GlobeePayment
 
 @receiver(globee_valid_ipn)
 def crypto_payment_ipn(sender, **kwargs):
+    # payment / sender contains the payment data sent to the IPN view
     payment = sender
     globee_payment = GlobeePayment()
     # OR set payment id in init
     # globee_payment = GlobeePayment(payment_id=payment.payment_id)
     
     try:
-        # get the payment data from globee
+        # get the payment data directly from GloBee
         payment_data = globee_payment.get_payment_by_id(payment.payment_id)
         # you don't need to set the payment id if you have already set the payment id in GlobeePayment init
         # payment_data = globee_payment.get_payment_by_id()
